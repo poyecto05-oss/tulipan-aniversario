@@ -246,23 +246,40 @@
   }
   #mensaje.mostrar { display: flex; }
   #mensaje .teamo {
-    font-size: clamp(2.6rem, 12vw, 4.5rem);
+    font-size: clamp(2.2rem, 10vw, 3.6rem);
     font-weight: 900;
     text-shadow: 0 4px 18px rgba(0,0,0,.3);
     animation: aparecer .7s cubic-bezier(.2,1.4,.3,1) both;
   }
-  #mensaje .frase {
-    margin-top: 18px;
-    font-size: clamp(1.1rem, 5vw, 1.5rem);
-    font-weight: 700;
-    max-width: 420px;
-    line-height: 1.6;
-    animation: aparecer .7s .35s cubic-bezier(.2,1.4,.3,1) both;
+  /* Carta con frases que aparecen una a una */
+  #mensaje .carta {
+    max-width: 460px;
+    margin-top: 8px;
   }
+  #mensaje .linea {
+    margin-top: 15px;
+    font-size: clamp(1.05rem, 4.8vw, 1.3rem);
+    font-weight: 600;
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: lineaAparecer .9s cubic-bezier(.2,1.2,.3,1) forwards;
+  }
+  @keyframes lineaAparecer {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  #mensaje .linea:nth-child(1) { animation-delay: .35s; }
+  #mensaje .linea:nth-child(2) { animation-delay: .9s; }
+  #mensaje .linea:nth-child(3) { animation-delay: 1.45s; }
+  #mensaje .linea:nth-child(4) { animation-delay: 2s; }
+  #mensaje .linea:nth-child(5) { animation-delay: 2.55s; }
+  #mensaje .linea:nth-child(6) { animation-delay: 3.1s; }
+  #mensaje .linea:nth-child(7) { animation-delay: 3.65s; }
+  #mensaje .linea:nth-child(8) { animation-delay: 4.2s; }
   #mensaje .emoji {
     font-size: 4rem;
     margin-top: 20px;
-    animation: aparecer .7s .55s cubic-bezier(.2,1.4,.3,1) both;
+    animation: aparecer .7s 4.8s cubic-bezier(.2,1.4,.3,1) both;
   }
 
   /* Galería dentro del mensaje final */
@@ -272,7 +289,7 @@
     justify-content: center;
     margin-top: 22px;
     flex-wrap: wrap;
-    animation: aparecer .7s .7s cubic-bezier(.2,1.4,.3,1) both;
+    animation: aparecer .7s 5.2s cubic-bezier(.2,1.4,.3,1) both;
   }
   .galeria img {
     width: min(38vw, 150px);
@@ -292,6 +309,7 @@
     text-align: center;
     box-shadow: 0 14px 34px rgba(0, 0, 0, .45), 0 0 0 2px rgba(30, 215, 96, .6);
     width: min(84vw, 320px);
+    animation: aparecer .7s 5.6s cubic-bezier(.2,1.4,.3,1) both;
   }
   .qr-cabeza {
     display: flex;
@@ -451,8 +469,16 @@
 
   <!-- ---------- Mensaje al tocar el tulipán ---------- -->
   <div id="mensaje">
-    <div class="teamo">TE AMO</div>
-    <div class="frase">y para siempre…<br>Feliz aniversario, mi amor 💛</div>
+    <div class="teamo">FELIZ ANIVERSARIO 💛</div>
+    <div class="carta">
+      <p class="linea">Mi amor,</p>
+      <p class="linea">Hoy el calendario cumple otro año de nosotros… y aún no encuentro palabras para explicar lo que siento.</p>
+      <p class="linea">Gracias por cada risa, cada abrazo y cada “te quiero”.</p>
+      <p class="linea">Contigo hasta los días normales se vuelven inolvidables.</p>
+      <p class="linea">Eres mi paz, mi alegría y mi persona favorita.</p>
+      <p class="linea">Prometo cuidarte, soñarte y amarte siempre.</p>
+      <p class="linea">Te amo hoy, mañana y por toda la vida. 💛</p>
+    </div>
     <div class="emoji">🌷💛🌷</div>
     <div class="galeria" id="galeriaFinal"></div>
 

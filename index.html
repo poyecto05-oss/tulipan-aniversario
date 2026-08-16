@@ -520,38 +520,62 @@
   // ============ MÚSICA (Amor de Cine - HUMBE) ============
   const btnMusica = document.getElementById('btnMusica');
   let musicaPlayer = null;
-  let musicaActiva = false;
+  let musicaLista = false;
+  let musicaSonando = false;
+  let musicaManual = false;
 
   window.onYouTubeIframeAPIReady = function () {
     musicaPlayer = new YT.Player('reproductor', {
       videoId: '4O1CNtVG7s8',
-      playerVars: { playsinline: 1, rel: 0, controls: 0, loop: 1, playlist: '4O1CNtVG7s8' }
+      playerVars: { playsinline: 1, rel: 0, controls: 0, loop: 1, playlist: '4O1CNtVG7s8' },
+      events: {
+        onReady: () => { musicaLista = true; },
+        onStateChange: (e) => {
+          const EST = YT.PlayerState;
+          if (e.data === EST.PLAYING) {
+            musicaSonando = true;
+            btnMusica.textContent = '💖';
+            btnMusica.classList.remove('off');
+          } else if (e.data === EST.PAUSED || e.data === EST.ENDED) {
+            musicaSonando = false;
+            if (!musicaManual) {
+              btnMusica.textContent = '🎵';
+              btnMusica.classList.add('off');
+            }
+          }
+        }
+      }
     });
   };
 
   function reproducirMusica() {
-    if (musicaPlayer && musicaPlayer.playVideo) {
+    if (!musicaPlayer || !musicaPlayer.playVideo) return;
+    try {
+      if (musicaPlayer.unMute) musicaPlayer.unMute();
       musicaPlayer.playVideo();
-      musicaActiva = true;
-      btnMusica.textContent = '💖';
-      btnMusica.classList.remove('off');
-    }
+    } catch (e) { }
   }
   function pausarMusica() {
+    musicaManual = true;
     if (musicaPlayer && musicaPlayer.pauseVideo) {
-      musicaPlayer.pauseVideo();
-      musicaActiva = false;
-      btnMusica.textContent = '🎵';
-      btnMusica.classList.add('off');
+      try { musicaPlayer.pauseVideo(); } catch (e) { }
     }
+    btnMusica.textContent = '🎵';
+    btnMusica.classList.add('off');
   }
-  // Al primer toque en la calculadora, la canción suena sola
   function autoMusica() {
-    if (!musicaActiva) reproducirMusica();
+    if (!musicaManual) reproducirMusica();
   }
-  btnMusica.addEventListener('pointerdown', (e) => {
+
+  btnMusica.addEventListener('click', (e) => {
     e.preventDefault();
-    musicaActiva ? pausarMusica() : reproducirMusica();
+    if (musicaSonando) pausarMusica();
+    else { musicaManual = false; reproducirMusica(); }
+  });
+
+  // La canción arranca apenas ella toca o escribe (más fiable en celulares)
+  ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(ev => {
+    document.addEventListener(ev, autoMusica, { once: true, passive: true });
   });
   // =======================================================
 
@@ -576,7 +600,6 @@
   document.querySelectorAll('.tecla').forEach(btn => {
     btn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      autoMusica();
       const v = btn.dataset.val;
       if (v === 'C') { expr = ''; error.classList.remove('mostrar'); }
       else if (v === 'del') { expr = expr.slice(0, -1); error.classList.remove('mostrar'); }
@@ -590,7 +613,6 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if ((e.key >= '0' && e.key <= '9') || e.key === '+' || e.key === 'Enter' || e.key === '=' || e.key === 'Backspace' || e.key === 'Escape') autoMusica();
     if (e.key >= '0' && e.key <= '9') { expr = (expr + e.key).slice(0, 11); error.classList.remove('mostrar'); actualizarPantalla(); }
     else if (e.key === '+') { expr = (expr + '+').slice(0, 11); error.classList.remove('mostrar'); actualizarPantalla(); }
     else if (e.key === 'Enter' || e.key === '=') { entrar(); }

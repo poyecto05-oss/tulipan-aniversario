@@ -21,7 +21,7 @@
     user-select: none;
   }
 
-  /* ---------- Login ---------- */
+  /* ---------- Login (calculadora) ---------- */
   #login {
     position: fixed;
     inset: 0;
@@ -37,47 +37,81 @@
   .caja-login {
     background: rgba(255, 255, 255, 0.92);
     border-radius: 26px;
-    padding: 34px 26px;
+    padding: 30px 22px 24px;
     width: 88%;
-    max-width: 380px;
+    max-width: 360px;
     text-align: center;
     box-shadow: 0 18px 50px rgba(179, 36, 79, 0.25);
   }
-  .caja-login .icono { font-size: 3rem; margin-bottom: 8px; }
-  .caja-login h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
-  .caja-login p { font-size: .92rem; opacity: .8; margin-bottom: 22px; font-weight: 600; }
+  .caja-login .icono { font-size: 2.6rem; margin-bottom: 6px; }
+  .caja-login h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
+  .caja-login p { font-size: .9rem; opacity: .8; margin-bottom: 18px; font-weight: 600; line-height: 1.45; }
 
-  input {
-    width: 100%;
+  /* Calculadora */
+  .calc {
+    background: linear-gradient(160deg, #e8d9f0, #f6ecf4);
+    border-radius: 18px;
     padding: 14px;
-    font-size: 1.25rem;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, .08), 0 8px 20px rgba(179, 36, 79, .14);
+  }
+  .calc-pantalla {
+    background: #fff;
+    border: 2px solid #ffd34d;
+    border-radius: 12px;
+    padding: 13px 16px;
+    min-height: 56px;
+    font-size: 1.5rem;
     font-weight: 800;
-    letter-spacing: 3px;
-    text-align: center;
+    letter-spacing: 2px;
     color: #b3244f;
-    border: 2px solid #ff9dbb;
-    border-radius: 14px;
-    outline: none;
-    background: #fff5f8;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+    overflow: hidden;
+    white-space: nowrap;
   }
-  input:focus { border-color: #ffd34d; box-shadow: 0 0 0 3px rgba(255, 211, 77, .35); }
-
-  .btn-entrar {
-    margin-top: 16px;
-    width: 100%;
-    padding: 14px;
-    font-size: 1.05rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #fff;
-    background: linear-gradient(90deg, #ff6b8b, #e63963);
+  .calc-pantalla.salta { animation: salta .35s ease; }
+  @keyframes salta {
+    0% { transform: translateY(0); }
+    30% { transform: translateY(-4px); }
+    60% { transform: translateY(2px); }
+    100% { transform: translateY(0); }
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+  }
+  .tecla {
     border: none;
-    border-radius: 14px;
+    border-radius: 12px;
+    padding: 13px 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    font-family: inherit;
+    color: #8d3b57;
+    background: #fff;
+    box-shadow: 0 3px 0 rgba(179, 36, 79, .15);
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(230, 57, 99, .35);
     touch-action: manipulation;
+    transition: transform .08s ease;
   }
-  .btn-entrar:active { transform: scale(.97); }
+  .tecla:active { transform: scale(.93); }
+  .tecla.op {
+    background: linear-gradient(135deg, #ffe37a, #ffb300);
+    color: #7a4f00;
+  }
+  .tecla.cero { grid-column: span 2; }
+  .tecla.igual {
+    grid-column: span 2;
+    background: linear-gradient(90deg, #ff6b8b, #e63963);
+    color: #fff;
+    font-size: 1.02rem;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 0 rgba(180, 30, 80, .35);
+  }
 
   #error {
     margin-top: 12px;
@@ -305,15 +339,36 @@
 </head>
 <body>
 
-  <!-- ---------- Pantalla de login ---------- -->
+  <!-- ---------- Pantalla de login (calculadora) ---------- -->
   <div id="login">
     <div class="caja-login" id="caja">
       <div class="icono">🌷💛</div>
       <h1>Feliz Aniversario</h1>
-      <p>Escribe la fecha en que empezó nuestro amor</p>
-      <input id="fecha" type="password" placeholder="Ingresa la fecha" inputmode="numeric" maxlength="10" autocomplete="off">
-      <button class="btn-entrar" id="entrar">Entrar 💛</button>
-      <div id="error">Esa fecha no es 😢 Inténtalo de nuevo</div>
+      <p>Resuelve la cuenta de nuestro amor…</p>
+
+      <div class="calc">
+        <div class="calc-pantalla" id="pantalla">0</div>
+        <div class="calc-grid">
+          <button class="tecla op" data-val="C" aria-label="Borrar">C</button>
+          <button class="tecla" data-val="7">7</button>
+          <button class="tecla" data-val="8">8</button>
+          <button class="tecla" data-val="9">9</button>
+
+          <button class="tecla op" data-val="+" aria-label="Más">+</button>
+          <button class="tecla" data-val="4">4</button>
+          <button class="tecla" data-val="5">5</button>
+          <button class="tecla" data-val="6">6</button>
+
+          <button class="tecla op" data-val="del" aria-label="Borrar último">⌫</button>
+          <button class="tecla" data-val="1">1</button>
+          <button class="tecla" data-val="2">2</button>
+          <button class="tecla" data-val="3">3</button>
+
+          <button class="tecla cero" data-val="0">0</button>
+          <button class="tecla igual" data-val="=">Entrar 💛</button>
+        </div>
+      </div>
+      <div id="error">Esa cuenta no da 😢 Inténtalo de nuevo</div>
     </div>
   </div>
 
@@ -421,23 +476,21 @@
 
   const login = document.getElementById('login');
   const caja = document.getElementById('caja');
-  const input = document.getElementById('fecha');
   const error = document.getElementById('error');
+  const pantalla = document.getElementById('pantalla');
   const escena = document.getElementById('escena');
   const tulipan = document.getElementById('tulipan');
   const mensaje = document.getElementById('mensaje');
 
-  // Máscara automática dd.mm.aaaa
-  input.addEventListener('input', () => {
-    const d = input.value.replace(/\D/g, '').slice(0, 8);
-    let r = d;
-    if (d.length > 4) r = d.slice(0, 2) + '.' + d.slice(2, 4) + '.' + d.slice(4);
-    else if (d.length > 2) r = d.slice(0, 2) + '.' + d.slice(2);
-    input.value = r;
-  });
+  // Calculadora de la fecha secreta (21+04+2025)
+  let expr = '';
+
+  function actualizarPantalla() {
+    pantalla.textContent = expr || '0';
+  }
 
   function entrar() {
-    const val = input.value.replace(/\D/g, '');
+    const val = expr.replace(/\D/g, '');
     if (val === FECHA_OK) {
       abrir();
     } else {
@@ -445,13 +498,33 @@
       caja.classList.remove('temblar');
       void caja.offsetWidth;
       caja.classList.add('temblar');
-      input.value = '';
-      input.focus();
+      expr = '';
+      actualizarPantalla();
     }
   }
 
-  document.getElementById('entrar').addEventListener('pointerdown', entrar);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') entrar(); });
+  document.querySelectorAll('.tecla').forEach(btn => {
+    btn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const v = btn.dataset.val;
+      if (v === 'C') { expr = ''; error.classList.remove('mostrar'); }
+      else if (v === 'del') { expr = expr.slice(0, -1); error.classList.remove('mostrar'); }
+      else if (v === '=') { entrar(); return; }
+      else { expr = (expr + v).slice(0, 11); error.classList.remove('mostrar'); }
+      pantalla.classList.remove('salta');
+      void pantalla.offsetWidth;
+      pantalla.classList.add('salta');
+      actualizarPantalla();
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key >= '0' && e.key <= '9') { expr = (expr + e.key).slice(0, 11); error.classList.remove('mostrar'); actualizarPantalla(); }
+    else if (e.key === '+') { expr = (expr + '+').slice(0, 11); error.classList.remove('mostrar'); actualizarPantalla(); }
+    else if (e.key === 'Enter' || e.key === '=') { entrar(); }
+    else if (e.key === 'Backspace') { expr = expr.slice(0, -1); error.classList.remove('mostrar'); actualizarPantalla(); }
+    else if (e.key === 'Escape') { expr = ''; error.classList.remove('mostrar'); actualizarPantalla(); }
+  });
 
   function abrir() {
     login.classList.add('salir');

@@ -335,9 +335,40 @@
   @keyframes caer {
     to { transform: translateY(115vh) rotate(320deg); }
   }
+
+  /* ---------- Botón de música flotante ---------- */
+  .btn-musica {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 50;
+    width: 54px;
+    height: 54px;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 22px rgba(179, 36, 79, 0.3);
+    touch-action: manipulation;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: latidoMusica 1.8s ease-in-out infinite;
+  }
+  .btn-musica.off { animation: none; opacity: .75; }
+  @keyframes latidoMusica {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+  #reproductor { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 </style>
 </head>
 <body>
+
+  <button class="btn-musica" id="btnMusica" aria-label="Música">🎵</button>
+  <div id="reproductor"></div>
 
   <!-- ---------- Pantalla de login (calculadora) ---------- -->
   <div id="login">
@@ -441,6 +472,7 @@
     </div>
   </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
   // ============ LA FECHA DEL ANIVERSARIO ============
   const FECHA_OK = '21042025'; // 21.04.2025
@@ -485,6 +517,44 @@
   // Calculadora de la fecha secreta (21+04+2025)
   let expr = '';
 
+  // ============ MÚSICA (Amor de Cine - HUMBE) ============
+  const btnMusica = document.getElementById('btnMusica');
+  let musicaPlayer = null;
+  let musicaActiva = false;
+
+  window.onYouTubeIframeAPIReady = function () {
+    musicaPlayer = new YT.Player('reproductor', {
+      videoId: '4O1CNtVG7s8',
+      playerVars: { playsinline: 1, rel: 0, controls: 0, loop: 1, playlist: '4O1CNtVG7s8' }
+    });
+  };
+
+  function reproducirMusica() {
+    if (musicaPlayer && musicaPlayer.playVideo) {
+      musicaPlayer.playVideo();
+      musicaActiva = true;
+      btnMusica.textContent = '💖';
+      btnMusica.classList.remove('off');
+    }
+  }
+  function pausarMusica() {
+    if (musicaPlayer && musicaPlayer.pauseVideo) {
+      musicaPlayer.pauseVideo();
+      musicaActiva = false;
+      btnMusica.textContent = '🎵';
+      btnMusica.classList.add('off');
+    }
+  }
+  // Al primer toque en la calculadora, la canción suena sola
+  function autoMusica() {
+    if (!musicaActiva) reproducirMusica();
+  }
+  btnMusica.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    musicaActiva ? pausarMusica() : reproducirMusica();
+  });
+  // =======================================================
+
   function actualizarPantalla() {
     pantalla.textContent = expr || '0';
   }
@@ -506,6 +576,7 @@
   document.querySelectorAll('.tecla').forEach(btn => {
     btn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
+      autoMusica();
       const v = btn.dataset.val;
       if (v === 'C') { expr = ''; error.classList.remove('mostrar'); }
       else if (v === 'del') { expr = expr.slice(0, -1); error.classList.remove('mostrar'); }
@@ -519,6 +590,7 @@
   });
 
   document.addEventListener('keydown', (e) => {
+    if ((e.key >= '0' && e.key <= '9') || e.key === '+' || e.key === 'Enter' || e.key === '=' || e.key === 'Backspace' || e.key === 'Escape') autoMusica();
     if (e.key >= '0' && e.key <= '9') { expr = (expr + e.key).slice(0, 11); error.classList.remove('mostrar'); actualizarPantalla(); }
     else if (e.key === '+') { expr = (expr + '+').slice(0, 11); error.classList.remove('mostrar'); actualizarPantalla(); }
     else if (e.key === 'Enter' || e.key === '=') { entrar(); }
